@@ -37,7 +37,7 @@ _
 sub show_duplicate_files {
     require App::UniqFiles;
     App::UniqFiles::uniq_files(
-        report_unique=>1, report_duplicate=>1, # -a
+        report_unique=>0, report_duplicate=>1, # -a
         count=>1, show_size=>1,
         group_by_digest=>1,
         recurse=>1, files=>['.'],
@@ -70,13 +70,15 @@ _
     examples => [
         {
             summary => 'See which duplicate files will be moved (a.k.a. dry-run mode by default)',
-            argv => ['.dupe/'],
+            src => 'move-duplicate-files-to .dupe/',
+            src_plang => 'bash',
             test => 0,
             'x.doc.show_result' => 0,
         },
         {
             summary => 'Actually move duplicate files to .dupe/ directory',
-            argv => ['--no-dry-run', '.dupe/'],
+            src => 'move-duplicate-files-to .dupe/ --no-dry-run',
+            src_plang => 'bash',
             test => 0,
             'x.doc.show_result' => 0,
         },
@@ -97,13 +99,16 @@ sub move_duplicate_files_to {
     );
     return [500, "Can't uniq_files: $res->[0] - $res->[1]"] unless $res->[0] == 200;
 
-    for my $f (@{ $res->[2] }) {
+    for my $rec (@{ $res->[2] }) {
+        my $src = $rec->{file};
+        (my $srcbase = $src) =~ s!.+/!!;
+        my $dest = "$dir/$srcbase";
         if ($args{-dry_run}) {
-            log_info "[DRY-RUN] Moving duplicate file %s to %s ...", $f, $dir;
+            log_info "[DRY-RUN] Moving duplicate file %s to %s ...", $src, $dest;
         } else {
-            log_info "Moving duplicate file %s to %s ...", $f, $dir;
-            rename $f, "$dir/$f" or do {
-                log_error "Failed moving %s to %s: %s", $f, $dir, $!;
+            log_info "Moving duplicate file %s to %s ...", $src, $dest;
+            rename $src, $dest or do {
+                log_error "Failed moving %s to %s: %s", $src, $dest, $!;
             };
         }
     }
