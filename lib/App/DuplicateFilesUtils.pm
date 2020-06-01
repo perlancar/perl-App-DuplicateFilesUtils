@@ -72,6 +72,11 @@ You can then delete or move the duplicates manually, if you want. But there's
 also <prog:move-duplicate-files-to> to automatically move all the duplicates
 (but one, for each set) to a directory of your choice.
 
+To perform other actions on the duplicate copies, for example delete them, you
+can use <prog:uniq-files> directly e.g. (in bash):
+
+    % uniq-files -R -D * | while read f; do rm "$p"; done
+
 _
     args => {
     },
