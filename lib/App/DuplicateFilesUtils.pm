@@ -68,6 +68,10 @@ Sample output:
     | ./tmp/IMG_3430-(93).JPG      | 2190379 | 2     |
     +------------------------------+---------+-------+
 
+You can then delete or move the duplicates manually, if you want. But there's
+also <prog:move-duplicate-files-to> to automatically move all the duplicates
+(but one, for each set) to a directory of your choice.
+
 _
     args => {
     },
@@ -90,6 +94,9 @@ $SPEC{move_duplicate_files_to} = {
     v => 1.1,
     summary => 'Move duplicate files (except one copy) to a directory',
     description => <<'_',
+
+This utility will find all duplicate sets of files and move all of the
+duplicates (except one) for each set to a directory of your choosing.
 
 Moving is currently done using Perl's `rename()`, so files cannot be moved
 across filesystems.
