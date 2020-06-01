@@ -149,7 +149,7 @@ sub move_duplicate_files_to {
         report_unique => 0,
         report_duplicate => 3,
         recurse => 1, files => ['.'],
-        count => 1,
+        show_count => 1,
     );
     return [500, "Can't uniq_files: $res->[0] - $res->[1]"] unless $res->[0] == 200;
 
