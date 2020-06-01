@@ -24,7 +24,7 @@ $SPEC{show_duplicate_files} = {
 
 This is actually a shortcut for:
 
-    % uniq-files -a --count --show-size --group-by-digest -R .
+    % uniq-files -a --show-count --show-size --group-by-digest -R .
 
 Sample output:
 
