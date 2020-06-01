@@ -103,9 +103,6 @@ $SPEC{move_duplicate_files_to} = {
 This utility will find all duplicate sets of files and move all of the
 duplicates (except one) for each set to a directory of your choosing.
 
-Moving is currently done using Perl's `rename()`, so files cannot be moved
-across filesystems.
-
 See also: <prog:show-duplicate-files> which lets you manually select which
 copies of the duplicate sets you want to move/delete.
 
@@ -160,8 +157,9 @@ sub move_duplicate_files_to {
         if ($args{-dry_run}) {
             log_info "[DRY-RUN] Moving duplicate file %s to %s ...", $src, $dest;
         } else {
+            require File::Copy;
             log_info "Moving duplicate file %s to %s ...", $src, $dest;
-            rename $src, $dest or do {
+            File::Copy::move($src, $dest) or do {
                 log_error "Failed moving %s to %s: %s", $src, $dest, $!;
             };
         }
