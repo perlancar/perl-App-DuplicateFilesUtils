@@ -2,3 +2,4 @@ App-DuplicateFilesUtils-*
 .build
 *~
 nytprof*
+.DS_Store
