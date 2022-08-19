@@ -1,14 +1,14 @@
 package App::DuplicateFilesUtils;
 
-# AUTHORITY
-# DATE
-# DIST
-# VERSION
-
 use 5.010001;
 use strict;
 use warnings;
 use Log::ger;
+
+# AUTHORITY
+# DATE
+# DIST
+# VERSION
 
 our %SPEC;
 
@@ -180,7 +180,7 @@ This distributions provides the following command-line utilities:
 
 =head1 SEE ALSO
 
-L<uniq-files> from L<App::UniqFiles>
+L<uniq-files> and L<dupe-files> from L<App::UniqFiles>
 
 L<find-duplicate-filenames> from L<App::FindUtils>
 
