@@ -68,14 +68,10 @@ Sample output:
     | ./tmp/IMG_3430-(93).JPG      | 2190379 | 2     |
     +------------------------------+---------+-------+
 
-You can then delete or move the duplicates manually, if you want. But there's
-also <prog:move-duplicate-files-to> to automatically move all the duplicates
-(but one, for each set) to a directory of your choice.
-
-To perform other actions on the duplicate copies, for example delete them, you
-can use <prog:uniq-files> directly e.g. (in bash):
-
-    % uniq-files -R -D * | while read f; do rm "$p"; done
+You can then delete, move the duplicates, or replace them with symlinks
+manually, if you want. But there's also <prog:delete-duplicate-files>,
+<prog:move-duplicate-files-to>, <prog:replce-duplicate-files-with-symlinks>,
+<prog:replace-duplicate-files-with-hardlinks>.
 
 _
     args => {
@@ -95,56 +91,21 @@ sub show_duplicate_files {
     );
 }
 
-$SPEC{move_duplicate_files_to} = {
-    v => 1.1,
-    summary => 'Move duplicate files (except one copy) to a directory',
-    description => <<'_',
+sub _action_duplicate_files {
+    my ($which, %args) = @_;
 
-This utility will find all duplicate sets of files and move all of the
-duplicates (except one) for each set to a directory of your choosing.
-
-See also: <prog:show-duplicate-files> which lets you manually select which
-copies of the duplicate sets you want to move/delete.
-
-_
-    args => {
-        dir => {
-            summary => 'Directory to move duplicate files into',
-            schema => 'dirname*',
-            pos => 0,
-            req => 1,
-        },
-    },
-    features => {
-        dry_run => {default=>1},
-    },
-    examples => [
-        {
-            summary => 'See which duplicate files will be moved (a.k.a. dry-run mode by default)',
-            src => 'move-duplicate-files-to .dupe/',
-            src_plang => 'bash',
-            test => 0,
-            'x.doc.show_result' => 0,
-        },
-        {
-            summary => 'Actually move duplicate files to .dupe/ directory',
-            src => 'move-duplicate-files-to .dupe/ --no-dry-run',
-            src_plang => 'bash',
-            test => 0,
-            'x.doc.show_result' => 0,
-        },
-    ],
-};
-sub move_duplicate_files_to {
-    my %args = @_;
-
-    my $dir = $args{dir} or return [400, "Please specify dir"];
-    (-d $dir) or return [412, "Target directory '$dir' does not exist"];
+    my $dir;
+  CHECK_ARGS: {
+        if ($which eq 'move') {
+            $dir = $args{dir} or return [400, "Please specify dir"];
+            (-d $dir) or return [412, "Target directory '$dir' does not exist"];
+        }
+    } # CHECK_ARGS
 
     require App::UniqFiles;
     my $res = App::UniqFiles::uniq_files(
         report_unique => 0,
-        report_duplicate => 3,
+        report_duplicate => 1,
         recurse => 1, files => ['.'],
         show_count => 1,
     );
@@ -168,6 +129,62 @@ sub move_duplicate_files_to {
     [200];
 }
 
+$SPEC{move_duplicate_files_to} = {
+    v => 1.1,
+    summary => 'Move duplicate files (except one copy) to a directory',
+    description => <<'_',
+
+This utility will find all duplicate sets of files and move all of the
+duplicates (except one) for each set to a directory of your choosing.
+
+You can specify one or more `--authoritative-dir` options to tell the utility on
+which director(y|ies) should be regarded as the authoritative source of files.
+If among the duplicate set, there is at least one that belongs under these
+directories then the first one of these files will be regarded as the
+authoritative ("original") version and not moved, while the others will be
+regarded as the duplicates and will be moved. If none of the duplicate files
+belong under one of the authoritative directories, then a warning will be issued
+and the first one will be picked as the original anyway.
+
+See also: <prog:replace-duplicate-files-with-symlinks> to replace the duplicate
+copies with symlinks to the "original", or
+<prog:replace-duplicate-files-with-symlinks> to replace the duplicate copies
+with hardlinks to the "original".
+
+See also: <prog:show-duplicate-files> which lets you manually select which
+copies of the duplicate sets you want to move/delete.
+
+_
+    args => {
+        dir => {
+            summary => 'Directory to move duplicate files into',
+            schema => 'dirname*',
+            pos => 0,
+            req => 1,
+        },
+        %argspecs_common,
+    },
+    features => {
+        dry_run => {default=>1},
+    },
+    examples => [
+        {
+            summary => 'See which duplicate files will be moved (a.k.a. dry-run mode by default)',
+            src => 'move-duplicate-files-to .dupe/',
+            src_plang => 'bash',
+            test => 0,
+            'x.doc.show_result' => 0,
+        },
+        {
+            summary => 'Actually move duplicate files to .dupe/ directory',
+            src => 'move-duplicate-files-to .dupe/ --no-dry-run',
+            src_plang => 'bash',
+            test => 0,
+            'x.doc.show_result' => 0,
+        },
+    ],
+};
+
 1;
 #ABSTRACT:
 
@@ -182,6 +199,7 @@ This distributions provides the following command-line utilities:
 
 L<uniq-files> and L<dupe-files> from L<App::UniqFiles>
 
-L<find-duplicate-filenames> from L<App::FindUtils>
+L<find-duplicate-filenames> from L<App::FindUtils>, which only check duplicate
+file names and not contents.
 
 =cut
