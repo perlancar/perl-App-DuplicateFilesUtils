@@ -94,11 +94,14 @@ sub show_duplicate_files {
 sub _action_duplicate_files {
     my ($which, %args) = @_;
 
-    my $dir;
+    my ($dir, $target);
   CHECK_ARGS: {
         if ($which eq 'move') {
-            $dir = $args{dir} or return [400, "Please specify dir"];
+            $dir = $args{dir} or return [400, "Please specify 'dir'"];
             (-d $dir) or return [412, "Target directory '$dir' does not exist"];
+        } elsif ($which eq 'symlink') {
+        } else {
+            return [400, "Unknown action '$which'"];
         }
     } # CHECK_ARGS
 
@@ -184,6 +187,60 @@ _
         },
     ],
 };
+sub move_duplicate_files_to {
+    _action_duplicate_files('move', @_);
+}
+
+$SPEC{replace_duplicate_files_with_symlinks} = {
+    v => 1.1,
+    summary => 'Replace duplicate files (except one copy) with symlinks to the one copy',
+    description => <<'_',
+
+This utility will find all duplicate sets of files and replace all of the
+duplicates (except one) for each set with symlinks to the one copy.
+
+(CURRENTLY UNIMPLEMENTED) You can specify one or more `--authoritative-dir`
+options to tell the utility on which director(y|ies) should be regarded as the
+authoritative source of files. If among the duplicate set, there is at least one
+that belongs under these directories then the first one of these files will be
+regarded as the authoritative ("original") version and not moved, while the
+others will be regarded as the duplicates and will be moved. If none of the
+duplicate files belong under one of the authoritative directories, then a
+warning will be issued and the first one will be picked as the original anyway.
+
+_
+    args => {
+        dir => {
+            summary => 'Directory to move duplicate files into',
+            schema => 'dirname*',
+            pos => 0,
+            req => 1,
+        },
+        %argspecs_common,
+    },
+    features => {
+        dry_run => {default=>1},
+    },
+    examples => [
+        {
+            summary => 'See which duplicate files will be replaced with symlinks (a.k.a. dry-run mode by default)',
+            src => '[[prog]]',
+            src_plang => 'bash',
+            test => 0,
+            'x.doc.show_result' => 0,
+        },
+        {
+            summary => 'Actually replace duplicate files with symlinks',
+            src => '[[prog]] --no-dry-run',
+            src_plang => 'bash',
+            test => 0,
+            'x.doc.show_result' => 0,
+        },
+    ],
+};
+sub replace_duplicate_files_with_symlinks {
+    _action_duplicate_files('symlink', @_);
+}
 
 1;
 #ABSTRACT:
