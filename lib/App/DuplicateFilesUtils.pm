@@ -33,7 +33,7 @@ $SPEC{show_duplicate_files} = {
 
 This is actually a shortcut for:
 
-    % uniq-files -a --show-count --show-size --group-by-digest -R .
+    % uniq-files -a --show-count --show-size --report-duplicate=3 --group-by-digest -R .
 
 Sample output:
 
@@ -41,46 +41,38 @@ Sample output:
     +------------------------------+---------+-------+
     | file                         | size    | count |
     +------------------------------+---------+-------+
-    | ./tmp/P_20161001_112707.jpg  | 1430261 | 2     |
     | ./tmp2/P_20161001_112707.jpg | 1430261 | 2     |
     |                              |         |       |
-    | ./20160420/IMG_3430-(95).JPG | 1633463 | 2     |
     | ./tmp/IMG_3430-(95).JPG      | 1633463 | 2     |
     |                              |         |       |
-    | ./tmp/P_20161009_081735.jpg  | 1722586 | 2     |
     | ./tmp2/P_20161009_081735.jpg | 1722586 | 2     |
     |                              |         |       |
-    | ./20160420/IMG_3430-(98).JPG | 1847543 | 3     |
     | ./tmp/IMG_3430-(98).JPG      | 1847543 | 3     |
     | ./tmp2/IMG_3430-(98).JPG     | 1847543 | 3     |
     |                              |         |       |
-    | ./20160420/IMG_3430-(97).JPG | 1878472 | 2     |
     | ./tmp/IMG_3430-(97).JPG      | 1878472 | 2     |
     |                              |         |       |
-    | ./20160420/IMG_3430-(99).JPG | 1960652 | 3     |
     | ./tmp/IMG_3430-(99).JPG      | 1960652 | 3     |
     | ./tmp2/IMG_3430-(99).JPG     | 1960652 | 3     |
     |                              |         |       |
-    | ./20160420/IMG_3430-(96).JPG | 2042952 | 2     |
     | ./tmp/IMG_3430-(96).JPG      | 2042952 | 2     |
     |                              |         |       |
-    | ./20160420/IMG_3430-(92).JPG | 2049127 | 2     |
     | ./tmp/IMG_3430-(92).JPG      | 2049127 | 2     |
     |                              |         |       |
-    | ./20160420/IMG_3430-(94).JPG | 2109852 | 2     |
     | ./tmp/IMG_3430-(94).JPG      | 2109852 | 2     |
     |                              |         |       |
-    | ./20160420/IMG_3430-(91).JPG | 2138724 | 2     |
     | ./tmp/IMG_3430-(91).JPG      | 2138724 | 2     |
     |                              |         |       |
-    | ./20160420/IMG_3430-(93).JPG | 2190379 | 2     |
     | ./tmp/IMG_3430-(93).JPG      | 2190379 | 2     |
     +------------------------------+---------+-------+
 
 You can then delete, move the duplicates, or replace them with symlinks
 manually, if you want. But there's also <prog:delete-duplicate-files>,
-<prog:move-duplicate-files-to>, <prog:replce-duplicate-files-with-symlinks>,
+<prog:move-duplicate-files-to>, <prog:replace-duplicate-files-with-symlinks>,
 <prog:replace-duplicate-files-with-hardlinks>.
+
+If you want more flexibility/customization, use <prog:uniq-files> or
+L<prog:dupe-files> directly.
 
 MARKDOWN
     args => {
