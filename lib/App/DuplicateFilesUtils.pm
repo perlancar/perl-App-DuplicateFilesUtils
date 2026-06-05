@@ -105,8 +105,8 @@ sub _action_duplicate_files {
         }
     } # CHECK_ARGS
 
-    require App::UniqFiles;
-    my $res = App::UniqFiles::uniq_files(
+    require File::FindUniq;
+    my $res = File::FindUniq::uniq_files(
         report_unique => 0,
         report_duplicate => 1,
         recurse => 1, files => ['.'],
