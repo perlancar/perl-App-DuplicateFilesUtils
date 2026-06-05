@@ -93,7 +93,7 @@ MARKDOWN
 sub show_duplicate_files {
     require File::FindUniq;
     File::FindUniq::uniq_files(
-        report_unique=>0, report_duplicate=>1, # -a
+        report_unique=>0, report_duplicate=>3, # -a
         show_count=>1, show_size=>1,
         group_by_digest=>1,
         recurse=>1, files=>['.'],
