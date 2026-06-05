@@ -94,7 +94,7 @@ sub show_duplicate_files {
     require File::FindUniq;
     File::FindUniq::uniq_files(
         report_unique=>0, report_duplicate=>1, # -a
-        count=>1, show_size=>1,
+        show_count=>1, show_size=>1,
         group_by_digest=>1,
         recurse=>1, files=>['.'],
     );
@@ -117,13 +117,16 @@ sub _action_duplicate_files {
     require File::FindUniq;
     my $res = File::FindUniq::uniq_files(
         report_unique => 0,
-        report_duplicate => 1,
+        report_duplicate => 3,
         recurse => 1, files => ['.'],
         show_count => 1,
     );
     return [500, "Can't uniq_files: $res->[0] - $res->[1]"] unless $res->[0] == 200;
 
+    #use DD; dd $res;
+
     for my $rec (@{ $res->[2] }) {
+        #log_trace "Record: %s", $rec;
         my $src = $rec->{file};
         (my $srcbase = $src) =~ s!.+/!!;
         my $dest = "$dir/$srcbase";
