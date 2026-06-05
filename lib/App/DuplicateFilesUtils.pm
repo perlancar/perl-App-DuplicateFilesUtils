@@ -12,6 +12,15 @@ use Log::ger;
 
 our %SPEC;
 
+our %argspecs_common = (
+    dir => {
+        summary => 'Directory to move duplicate files into',
+        schema => 'dirname*',
+        pos => 0,
+        req => 1,
+    },
+);
+
 $SPEC{':package'} = {
     v => 1.1,
     summary => 'CLI utilities related to duplicate files',
@@ -20,7 +29,7 @@ $SPEC{':package'} = {
 $SPEC{show_duplicate_files} = {
     v => 1.1,
     summary => 'Show duplicate files',
-    description => <<'_',
+    description => <<'MARKDOWN',
 
 This is actually a shortcut for:
 
@@ -73,7 +82,7 @@ manually, if you want. But there's also <prog:delete-duplicate-files>,
 <prog:move-duplicate-files-to>, <prog:replce-duplicate-files-with-symlinks>,
 <prog:replace-duplicate-files-with-hardlinks>.
 
-_
+MARKDOWN
     args => {
     },
     features => {
@@ -82,8 +91,8 @@ _
     ],
 };
 sub show_duplicate_files {
-    require App::UniqFiles;
-    App::UniqFiles::uniq_files(
+    require File::FindUniq;
+    File::FindUniq::uniq_files(
         report_unique=>0, report_duplicate=>1, # -a
         count=>1, show_size=>1,
         group_by_digest=>1,
@@ -135,7 +144,7 @@ sub _action_duplicate_files {
 $SPEC{move_duplicate_files_to} = {
     v => 1.1,
     summary => 'Move duplicate files (except one copy) to a directory',
-    description => <<'_',
+    description => <<'MARKDOWN',
 
 This utility will find all duplicate sets of files and move all of the
 duplicates (except one) for each set to a directory of your choosing.
@@ -157,14 +166,8 @@ with hardlinks to the "original".
 See also: <prog:show-duplicate-files> which lets you manually select which
 copies of the duplicate sets you want to move/delete.
 
-_
+MARKDOWN
     args => {
-        dir => {
-            summary => 'Directory to move duplicate files into',
-            schema => 'dirname*',
-            pos => 0,
-            req => 1,
-        },
         %argspecs_common,
     },
     features => {
@@ -194,7 +197,7 @@ sub move_duplicate_files_to {
 $SPEC{replace_duplicate_files_with_symlinks} = {
     v => 1.1,
     summary => 'Replace duplicate files (except one copy) with symlinks to the one copy',
-    description => <<'_',
+    description => <<'MARKDOWN',
 
 This utility will find all duplicate sets of files and replace all of the
 duplicates (except one) for each set with symlinks to the one copy.
@@ -208,14 +211,8 @@ others will be regarded as the duplicates and will be moved. If none of the
 duplicate files belong under one of the authoritative directories, then a
 warning will be issued and the first one will be picked as the original anyway.
 
-_
+MARKDOWN
     args => {
-        dir => {
-            summary => 'Directory to move duplicate files into',
-            schema => 'dirname*',
-            pos => 0,
-            req => 1,
-        },
         %argspecs_common,
     },
     features => {
@@ -254,7 +251,8 @@ This distributions provides the following command-line utilities:
 
 =head1 SEE ALSO
 
-L<uniq-files> and L<dupe-files> from L<App::UniqFiles>
+L<uniq-files> and L<dupe-files> from L<App::UniqFiles> (which in turn is from
+L<File::FindUniq>).
 
 L<find-duplicate-filenames> from L<App::FindUtils>, which only check duplicate
 file names and not contents.
